@@ -1,15 +1,19 @@
-package net
+package netgo
 
 import (
 	"encoding/binary"
 	"fmt"
 	"github.com/xlkness/netgo/event"
+	"github.com/xlkness/netgo/netgo"
+	"sync"
 	"testing"
 	"time"
 )
 
 func TestEchoTcp(t *testing.T) {
-	server := NewSocketListener("tcp", "192.168.1.188:9190", 1<<16, time.Minute, func(e *event.Event, client Socket) {
+	wg := &sync.WaitGroup{}
+
+	server := NewSocketListener("tcp", "192.168.1.188:9190", 1<<16, time.Minute, func(e *event.Event, client netgo.Socket) {
 		switch e.Type {
 		case event.EventTypeSocketConnect:
 			fmt.Printf("client:%v connect!\n", client.GetRawConn().RemoteAddr().String())
@@ -21,6 +25,7 @@ func TestEchoTcp(t *testing.T) {
 		}
 	})
 	server.StartListen()
+	wg.Add(10)
 	for i := 0; i < 10; i++ {
 		go func() {
 			client := NewSocketConnector("tcp", "192.168.1.188:9190", 1<<16, time.Minute)
@@ -40,15 +45,18 @@ func TestEchoTcp(t *testing.T) {
 				return
 			}
 			fmt.Printf("client recv echo msg:%v-%v\n", tag, string(payload))
+			client.Close()
+			wg.Done()
 		}()
 	}
+	wg.Wait()
 }
 
 func getTestPacket(tag uint32, payload []byte) []byte {
 
 	buf := make([]byte, 8)
 	binary.LittleEndian.PutUint32(buf, tag)
-	binary.LittleEndian.PutUint32(buf, uint32(len(payload)))
+	binary.LittleEndian.PutUint32(buf[4:], uint32(len(payload)))
 	buf = append(buf, payload...)
 	return buf
 }

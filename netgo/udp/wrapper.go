@@ -4,13 +4,14 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/xlkness/netgo/event"
+	"github.com/xlkness/netgo/netgo"
 	"net"
 	"sync/atomic"
 	"time"
 )
 
 func NewSocketUdpListener(addr string, maxRecvMsgLen int32, maxWriteDeadline time.Duration,
-	eventCb func(*event.Event, interface{})) *SocketUdp {
+	eventCb func(*event.Event, netgo.Socket)) *SocketUdp {
 	listener := &SocketUdp{
 		addr:       addr,
 		maxRecvLen: maxRecvMsgLen,

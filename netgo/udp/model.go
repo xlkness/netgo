@@ -2,12 +2,13 @@ package udp
 
 import (
 	"github.com/xlkness/netgo/event"
+	net1 "github.com/xlkness/netgo/netgo"
 	"net"
 	"time"
 )
 
 type Listener struct {
-	eventCb func(*event.Event, interface{})
+	eventCb func(*event.Event, net1.Socket)
 }
 
 type Connector struct {

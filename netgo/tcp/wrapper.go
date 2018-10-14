@@ -3,6 +3,7 @@ package tcp
 import (
 	"bufio"
 	"github.com/xlkness/netgo/event"
+	"github.com/xlkness/netgo/netgo"
 	"github.com/xlkness/netgo/utils"
 	"net"
 	"sync/atomic"
@@ -10,7 +11,7 @@ import (
 )
 
 func NewSocketTcpListener(addr string, maxRecvMsgLen int32, maxWriteDeadline time.Duration,
-	eventCb func(*event.Event, interface{})) *SocketTcp {
+	eventCb func(*event.Event, netgo.Socket)) *SocketTcp {
 	listener := &SocketTcp{}
 	listener.addr = addr
 	listener.eventCb = eventCb
