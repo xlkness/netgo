@@ -1,7 +1,6 @@
 package netgo
 
 import (
-	"encoding/binary"
 	"fmt"
 	"github.com/xlkness/netgo/event"
 	"github.com/xlkness/netgo/netgo"
@@ -29,7 +28,7 @@ func testLogicFun(t *testing.T, commType string) {
 			fmt.Printf("%v <- %v, client closed!\n", client.GetLocalAddr(), client.GetRemoteAddr())
 		case event.EventTypeSocketRecv:
 			fmt.Printf("%v <- %v, client packet:%v-%v\n", client.GetLocalAddr(), client.GetRemoteAddr(), e.Msg.Tag, string(e.Msg.Payload))
-			client.Write(getTestPacket(e.Msg.Tag, e.Msg.Payload))
+			client.Write(e.Msg.Tag, e.Msg.Payload)
 		}
 	})
 
@@ -47,7 +46,7 @@ func testLogicFun(t *testing.T, commType string) {
 				t.Fatalf("client connect err:%v\n", err)
 				return
 			}
-			err = client.Write(getTestPacket(uint32(12345), []byte("netgo")))
+			err = client.Write(uint32(12345), []byte("netgo"))
 			if err != nil {
 				t.Fatalf("client write err:%v\n", err)
 				return
@@ -63,12 +62,4 @@ func testLogicFun(t *testing.T, commType string) {
 		}()
 	}
 	wg.Wait()
-}
-
-func getTestPacket(tag uint32, payload []byte) []byte {
-	buf := make([]byte, 8)
-	binary.LittleEndian.PutUint32(buf, tag)
-	binary.LittleEndian.PutUint32(buf[4:], uint32(len(payload)))
-	buf = append(buf, payload...)
-	return buf
 }

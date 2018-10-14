@@ -101,14 +101,18 @@ func (connector *SocketUdp) Read() (uint32, []byte, error) {
 	return tag, payload, nil
 }
 
-func (su *SocketUdp) Write(msg []byte) error {
+func (su *SocketUdp) Write(tag uint32, payload []byte) error {
+	buf := make([]byte, 8)
+	binary.LittleEndian.PutUint32(buf, tag)
+	binary.LittleEndian.PutUint32(buf[4:], uint32(len(payload)))
+	buf = append(buf, payload...)
 	if atomic.LoadInt32(&su.isListener) == 1 {
-		_, err := su.conn.(*net.UDPConn).WriteToUDP(msg, su.udpAddr)
+		_, err := su.conn.(*net.UDPConn).WriteToUDP(buf, su.udpAddr)
 		if err != nil {
 			return err
 		}
 	} else {
-		_, err := su.conn.Write(msg)
+		_, err := su.conn.Write(buf)
 		if err != nil {
 			return err
 		}

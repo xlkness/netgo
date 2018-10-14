@@ -19,11 +19,7 @@ func TestEcho(t *testing.T) {
 			fmt.Printf("client close!\n")
 		case event.EventTypeSocketRecv:
 			fmt.Printf("recv client msg:%v-%v\n", e.Msg.Tag, string(e.Msg.Payload))
-			buf := make([]byte, 8)
-			binary.LittleEndian.PutUint32(buf, uint32(123))
-			binary.LittleEndian.PutUint32(buf[4:], uint32(len(e.Msg.Payload)))
-			buf = append(buf, e.Msg.Payload...)
-			client.Write(buf)
+			client.Write(e.Msg.Tag, e.Msg.Payload)
 		}
 	})
 	server.StartListen()
@@ -38,12 +34,7 @@ func TestEcho(t *testing.T) {
 				fmt.Printf("connect %s err:%v\n", c.addr, err)
 				return
 			}
-			payload := []byte("likun")
-			buf := make([]byte, 8)
-			binary.LittleEndian.PutUint32(buf, uint32(123))
-			binary.LittleEndian.PutUint32(buf[4:], uint32(len(payload)))
-			buf = append(buf, payload...)
-			c.Write(buf)
+			c.Write(uint32(123), []byte("netgo"))
 			tag, msg, err := c.Read()
 			if err != nil {
 				fmt.Printf("write and recv err:%v", err)

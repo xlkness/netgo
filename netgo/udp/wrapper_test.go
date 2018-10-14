@@ -16,13 +16,9 @@ func TestEcho(t *testing.T) {
 		switch e.Type {
 		case event.EventTypeSocketRecv:
 			fmt.Printf("recv msg:%v\n", string(e.Msg.Payload))
-			buf := make([]byte, 8)
-			binary.LittleEndian.PutUint32(buf, e.Msg.Tag)
-			binary.LittleEndian.PutUint32(buf[4:], uint32(len(e.Msg.Payload)))
-			buf = append(buf, e.Msg.Payload...)
-			err := client.Write(buf)
+			err := client.Write(e.Msg.Tag, e.Msg.Payload)
 			if err != nil {
-				fmt.Printf("echo write err:%v, %v\n", err, len(buf))
+				fmt.Printf("echo write err:%v, %v\n", err, len(e.Msg.Payload))
 			}
 		}
 	})
@@ -36,12 +32,7 @@ func TestEcho(t *testing.T) {
 				fmt.Printf("conect err:%v\n", err)
 				return
 			}
-			payload := []byte("likun")
-			buf := make([]byte, 8)
-			binary.LittleEndian.PutUint32(buf, uint32(123))
-			binary.LittleEndian.PutUint32(buf[4:], uint32(len(payload)))
-			buf = append(buf, payload...)
-			err := client.Write(buf)
+			err := client.Write(uint32(123), []byte("netgo"))
 			if err != nil {
 				fmt.Printf("write err:%v\n", err)
 				return

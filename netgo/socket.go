@@ -14,7 +14,7 @@ type Socket interface {
 		|--------------------------------------------------------|
 		note: tag/length are both using little endian
 	*/
-	Write(msg []byte) error
+	Write(tag uint32, payload []byte) error
 	Close()
 	GetLocalAddr() string
 	GetRemoteAddr() string

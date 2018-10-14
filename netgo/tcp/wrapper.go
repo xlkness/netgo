@@ -2,6 +2,7 @@ package tcp
 
 import (
 	"bufio"
+	"encoding/binary"
 	"github.com/xlkness/netgo/event"
 	"github.com/xlkness/netgo/netgo"
 	"github.com/xlkness/netgo/utils"
@@ -69,8 +70,12 @@ func (connector *SocketTcp) Read() (uint32, []byte, error) {
 	return utils.ReadTLVMsg(connector.readStream, connector.maxRecvLen)
 }
 
-func (connector *SocketTcp) Write(msg []byte) error {
-	connector.writeChann <- msg
+func (connector *SocketTcp) Write(tag uint32, payload []byte) error {
+	buf := make([]byte, 8)
+	binary.LittleEndian.PutUint32(buf, tag)
+	binary.LittleEndian.PutUint32(buf[4:], uint32(len(payload)))
+	buf = append(buf, payload...)
+	connector.writeChann <- buf
 	return nil
 }
 
