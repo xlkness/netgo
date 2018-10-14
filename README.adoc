@@ -1,6 +1,6 @@
 = netgo
 
-*netgo* is a golang net library, only support tcp&udp network communication.
+*netgo* is a golang network library, only support *tcp* and *udp* network communication.
 
 == usage
 A simple 'N:1' echo example in `netgo_test.go`.
