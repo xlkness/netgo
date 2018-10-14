@@ -6,6 +6,14 @@ type Socket interface {
 	Connect() error
 	// only use for connector
 	Read() (uint32, []byte, error)
+
+	/*
+		memory layout in a frame:
+		|--------------------------------------------------------|
+		|--tag:4bytes--|--length:4bytes--|--payload:maxLength-8--|
+		|--------------------------------------------------------|
+		note: tag/length are both using little endian
+	*/
 	Write(msg []byte) error
 	Close()
 	GetLocalAddr() string
