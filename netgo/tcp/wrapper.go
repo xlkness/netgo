@@ -79,8 +79,12 @@ func (connector *SocketTcp) Close() {
 	connector.setIsStop(1)
 }
 
-func (st *SocketTcp) GetRawConn() net.Conn {
-	return st.conn
+func (su *SocketTcp) GetLocalAddr() string {
+	return su.conn.LocalAddr().String()
+}
+
+func (su *SocketTcp) GetRemoteAddr() string {
+	return su.conn.RemoteAddr().String()
 }
 
 func (listener *SocketTcp) newSocketTcpConnector(conn net.Conn) *SocketTcp {

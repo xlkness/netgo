@@ -1,7 +1,5 @@
 package netgo
 
-import "net"
-
 type Socket interface {
 	StartListen() error
 	EndListen()
@@ -10,5 +8,6 @@ type Socket interface {
 	Read() (uint32, []byte, error)
 	Write(msg []byte) error
 	Close()
-	GetRawConn() net.Conn
+	GetLocalAddr() string
+	GetRemoteAddr() string
 }

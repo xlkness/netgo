@@ -59,6 +59,7 @@ func (listener *SocketUdp) StartListen() error {
 		client := listener.newSocketUdpConnector(listenerFd, cAddr)
 		listener.eventCb(e, client)
 	}
+
 	return nil
 }
 
@@ -119,8 +120,15 @@ func (connector *SocketUdp) Close() {
 	connector.conn.Close()
 }
 
-func (su *SocketUdp) GetRawConn() net.Conn {
-	return su.conn
+func (su *SocketUdp) GetLocalAddr() string {
+	return su.conn.LocalAddr().String()
+}
+
+func (su *SocketUdp) GetRemoteAddr() string {
+	if atomic.LoadInt32(&su.isListener) == 1 {
+		return su.udpAddr.String()
+	}
+	return su.conn.RemoteAddr().String()
 }
 
 func (listener *SocketUdp) newSocketUdpConnector(conn net.Conn, cAddr *net.UDPAddr) *SocketUdp {
