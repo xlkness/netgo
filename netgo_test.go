@@ -3,7 +3,7 @@ package netgo
 import (
 	"fmt"
 	"github.com/xlkness/netgo/event"
-	"github.com/xlkness/netgo/netgo"
+	"github.com/xlkness/netgo/socket"
 	"sync"
 	"testing"
 	"time"
@@ -20,7 +20,7 @@ func TestEchoUdp(t *testing.T) {
 func testLogicFun(t *testing.T, commType string) {
 	wg := &sync.WaitGroup{}
 
-	server := NewSocketListener(commType, "192.168.1.188:9190", 1<<16, time.Minute, func(e *event.Event, client netgo.Socket) {
+	server := NewSocketListener(commType, "192.168.1.188:9190", 1<<16, time.Minute, func(e *event.Event, client socket.Socket) {
 		switch e.Type {
 		case event.EventTypeSocketConnect:
 			fmt.Printf("%v <- %v, client connect!\n", client.GetLocalAddr(), client.GetRemoteAddr())

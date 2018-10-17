@@ -2,14 +2,14 @@ package netgo
 
 import (
 	"github.com/xlkness/netgo/event"
-	"github.com/xlkness/netgo/netgo"
-	"github.com/xlkness/netgo/netgo/tcp"
-	"github.com/xlkness/netgo/netgo/udp"
+	"github.com/xlkness/netgo/socket"
+	"github.com/xlkness/netgo/socket/tcp"
+	"github.com/xlkness/netgo/socket/udp"
 	"time"
 )
 
 func NewSocketListener(commType, addr string, maxRecvMsgLen int32, maxWriteDeadline time.Duration,
-	eventcb func(*event.Event, netgo.Socket)) netgo.Socket {
+	eventcb func(*event.Event, socket.Socket)) socket.Socket {
 	if commType == "tcp" {
 		return tcp.NewSocketTcpListener(addr, maxRecvMsgLen, maxWriteDeadline, eventcb)
 	} else if commType == "udp" {
@@ -18,7 +18,7 @@ func NewSocketListener(commType, addr string, maxRecvMsgLen int32, maxWriteDeadl
 	return nil
 }
 
-func NewSocketConnector(commType, addr string, maxRecvMsgLen int32, maxWriteDeadline time.Duration) netgo.Socket {
+func NewSocketConnector(commType, addr string, maxRecvMsgLen int32, maxWriteDeadline time.Duration) socket.Socket {
 	if commType == "tcp" {
 		return tcp.NewSocketTcpConnector(addr, maxRecvMsgLen, maxWriteDeadline)
 	} else if commType == "udp" {
